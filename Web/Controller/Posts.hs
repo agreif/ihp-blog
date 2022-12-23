@@ -57,3 +57,11 @@ instance Controller PostsController where
 buildPost post = post
     |> fill @["title", "body"]
     |> validateField #title nonEmpty
+    |> validateField #body nonEmpty
+    |> validateField #body isMarkdown
+
+isMarkdown :: Text -> ValidatorResult
+isMarkdown text =
+    case MMark.parse "" text of
+        Left _ -> Failure "Please provide valid Markdown"
+        Right _ -> Success
